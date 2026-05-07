@@ -1,5 +1,6 @@
 package com.mcon152.pyro.model;
 
+import com.opencsv.bean.CsvBindByName;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,26 +13,34 @@ public class Firework {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CsvBindByName(column = "name")
     private String name;
-    private Double duration; // How many seconds it lasts
-    private String pace;     // "Slow", "Medium", or "Fast"
 
-    // Default constructor (required by JPA)
+    @CsvBindByName(column = "duration")
+    private Double duration;
+
+    @CsvBindByName(column = "pace")
+    private String pace;
+
+    // Default constructor (Required for JPA and OpenCSV)
     public Firework() {}
 
-    // Constructor for easy creation
+    // Constructor for creating fireworks manually
     public Firework(String name, Double duration, String pace) {
         this.name = name;
         this.duration = duration;
         this.pace = pace;
     }
 
-    // Getters and Setters (This allows the app to read/write the data)
+    // Getters and Setters
     public Long getId() { return id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
     public Double getDuration() { return duration; }
     public void setDuration(Double duration) { this.duration = duration; }
+
     public String getPace() { return pace; }
     public void setPace(String pace) { this.pace = pace; }
 }
