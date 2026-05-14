@@ -1,22 +1,33 @@
-from flask import Flask, render_template, request
-import sqlite3
 import os
-import google.generativeai as genai
+import sqlite3
 import json
-import random
 import toml
+import google.generativeai as genai
+from flask import Flask, render_template, request
 
-# --- SECRETS LOADER ---
+# --- NEW VAULT LOADER ---
 base_dir = os.path.dirname(os.path.abspath(__file__))
-# New path pointing to our 'vault' folder
 vault_path = os.path.join(base_dir, "vault", "keys.toml")
 
+api_key = None
+
 if os.path.exists(vault_path):
-    secrets = toml.load(vault_path)
-    api_key = secrets.get("GEMINI_API_KEY")
+    try:
+        secrets = toml.load(vault_path)
+        api_key = secrets.get("GEMINI_API_KEY")
+        print("✅ Successfully loaded API key from vault.")
+    except Exception as e:
+        print(f"❌ Error reading vault/keys.toml: {e}")
 else:
-    # Backup for when you eventually deploy to the cloud
+    # Try Environment Variable (for deployment)
     api_key = os.environ.get("GEMINI_API_KEY")
+    print("ℹ️ Vault not found, checking environment variables...")
+
+# CRITICAL STEP: Hand the key to Google
+if api_key:
+    genai.configure(api_key=api_key)
+else:
+    print("⚠️ CRITICAL: No API Key found! Analysis will fail.")
 
 # 1. Create the App variable FIRST
 app = Flask(__name__)

@@ -36,7 +36,7 @@
             padding: 25px;
             border-radius: 12px;
             border: 1px solid var(--border);
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
@@ -69,6 +69,25 @@
         button:hover {
             background: #ff3333;
             transform: translateY(-1px);
+        }
+
+        /* Special Styling for the Future Button */
+        .future-btn {
+            background: linear-gradient(45deg, #ff4b4b, #ff8000);
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            box-shadow: 0 0 25px rgba(255, 75, 75, 0.5);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .future-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(255, 75, 75, 0.7);
         }
 
         h2 {
@@ -137,6 +156,7 @@
             background-color: rgba(0,0,0,0.95);
         }
 
+        /* Ensure the modal content doesn't show scrollbars */
         .modal-content {
             margin: 5% auto;
             width: 80%;
@@ -144,8 +164,11 @@
             border: 2px solid var(--accent);
             box-shadow: 0 0 30px var(--accent);
             position: relative;
+            background: black; /* Fills in the gaps around vertical videos */
+            overflow: hidden;   /* This kills that 'extra box' artifact */
         }
 
+        /* Move the X so it's clearly inside or floating above the corner */
         .close {
             color: white;
             position: absolute;
@@ -154,8 +177,10 @@
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
-            z-index: 2001;
+            z-index: 3000;      /* Make sure it's on top of the iframe */
+            text-shadow: 0 0 5px black; /* Makes it visible over bright video frames */
         }
+
     </style>
 </head>
 <body>
@@ -175,23 +200,15 @@
     </form>
 </div>
 
-{% if plan %}
-<div style="text-align: center; margin-bottom: 30px;">
-    <button type="button" onclick="openVideo()" style="background: linear-gradient(45deg, #ff4b4b, #ff8000); padding: 15px 30px; font-size: 1.1rem; border-radius: 50px; box-shadow: 0 0 20px rgba(255, 75, 75, 0.4);">
+{% if not plan %}
+<div style="text-align: center; margin-top: 30px; margin-bottom: 50px;">
+    <button type="button" class="future-btn" onclick="openVideo()">
         ✨ Click here to view your future ✨
     </button>
 </div>
+{% endif %}
 
-<div id="videoModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeVideo()">&times;</span>
-        <video id="promoVideo" width="100%" controls>
-            <source src="{{ url_for('static', filename='videos/show1.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-</div>
-
+{% if plan %}
 <h2>Choreography Results</h2>
 <table>
     <thead>
@@ -216,6 +233,20 @@
     </tbody>
 </table>
 {% endif %}
+
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeVideo()">&times;</span>
+
+        <iframe
+                src="https://drive.google.com/file/d/17HaKNdS4-8-sk87jh2Vo_xPyLTx4WtTA/preview"
+                width="100%"
+                height="480"
+                allow="autoplay"
+                style="border: none;">
+        </iframe>
+    </div>
+</div>
 
 <script>
     var modal = document.getElementById("videoModal");
