@@ -6,7 +6,7 @@
     <title>PyroPlanner</title>
     <style>
         :root {
-            --accent: #ff4b4b; /* Firework Red */
+            --accent: #ff4b4b;
             --bg: #121212;
             --card-bg: #1e1e1e;
             --text: #e0e0e0;
@@ -77,10 +77,9 @@
             margin-top: 40px;
         }
 
-        /* --- THE TABLE FIXES --- */
         table {
             width: 100%;
-            border-collapse: collapse; /* Merges borders into single lines */
+            border-collapse: collapse;
             margin-top: 20px;
             background: var(--card-bg);
             border-radius: 8px;
@@ -102,21 +101,69 @@
             padding: 15px;
             border-bottom: 1px solid var(--border);
             color: #ffffff;
-            font-weight: 500; /* Ensures no columns are accidentally bold */
-        }
-
-        tr:last-child td {
-            border-bottom: none; /* Removes the last line for a cleaner look */
+            font-weight: 500;
         }
 
         tr:hover td {
-            background-color: #252525; /* Subtle highlight on hover */
-            color: white;
+            background-color: #252525;
         }
 
+        .fw-img {
+            position: fixed;
+            width: 200px;
+            height: auto;
+            z-index: -1;
+            opacity: 1.0;
+            pointer-events: none;
+            filter: brightness(1.5) contrast(1.2);
+        }
+
+        .top-left { top: 20px; left: 20px; transform: rotate(-15deg); }
+        .top-right { top: 20px; right: 20px; transform: rotate(15deg); }
+        .mid-left { top: 50%; left: 10px; transform: translateY(-50%) rotate(-5deg); }
+        .mid-right { top: 50%; right: 10px; transform: translateY(-50%) rotate(5deg); }
+
+        @media (max-width: 1000px) {
+            .fw-img { display: none; }
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        .modal-content {
+            margin: 5% auto;
+            width: 80%;
+            max-width: 900px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent);
+            position: relative;
+        }
+
+        .close {
+            color: white;
+            position: absolute;
+            right: 15px;
+            top: 5px;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2001;
+        }
     </style>
 </head>
 <body>
+
+<img src="{{ url_for('static', filename='firework1.jpg') }}" class="fw-img top-left">
+<img src="{{ url_for('static', filename='firework2.jpg') }}" class="fw-img top-right">
+<img src="{{ url_for('static', filename='firework3.jpeg') }}" class="fw-img mid-left">
+<img src="{{ url_for('static', filename='firework4.jpeg') }}" class="fw-img mid-right">
 
 <h1>PyroPlanner</h1>
 
@@ -129,6 +176,22 @@
 </div>
 
 {% if plan %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <button type="button" onclick="openVideo()" style="background: linear-gradient(45deg, #ff4b4b, #ff8000); padding: 15px 30px; font-size: 1.1rem; border-radius: 50px; box-shadow: 0 0 20px rgba(255, 75, 75, 0.4);">
+        ✨ Click here to view your future ✨
+    </button>
+</div>
+
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeVideo()">&times;</span>
+        <video id="promoVideo" width="100%" controls>
+            <source src="{{ url_for('static', filename='videos/show1.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
 <h2>Choreography Results</h2>
 <table>
     <thead>
@@ -153,6 +216,28 @@
     </tbody>
 </table>
 {% endif %}
+
+<script>
+    var modal = document.getElementById("videoModal");
+    var video = document.getElementById("promoVideo");
+
+    function openVideo() {
+        modal.style.display = "block";
+        video.play();
+    }
+
+    function closeVideo() {
+        modal.style.display = "none";
+        video.pause();
+        video.currentTime = 0;
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeVideo();
+        }
+    }
+</script>
 
 </body>
 </html>

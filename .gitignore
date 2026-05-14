@@ -29,3 +29,5 @@ __pycache__/
 *.wav
 temp_audio.mp3
 temp_audio_upload.mp3
+vault/
+static/videos/

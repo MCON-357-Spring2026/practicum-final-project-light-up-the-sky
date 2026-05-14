@@ -7,21 +7,16 @@ import random
 import toml
 
 # --- SECRETS LOADER ---
-# First, try to load from local secrets.toml
 base_dir = os.path.dirname(os.path.abspath(__file__))
-secrets_path = os.path.join(base_dir, ".streamlit", "secrets.toml")
+# New path pointing to our 'vault' folder
+vault_path = os.path.join(base_dir, "vault", "keys.toml")
 
-if os.path.exists(secrets_path):
-    secrets = toml.load(secrets_path)
-    api_key = secrets["GEMINI_API_KEY"]
+if os.path.exists(vault_path):
+    secrets = toml.load(vault_path)
+    api_key = secrets.get("GEMINI_API_KEY")
 else:
-    # If file doesn't exist (like on Render), look for an Environment Variable
+    # Backup for when you eventually deploy to the cloud
     api_key = os.environ.get("GEMINI_API_KEY")
-
-if api_key:
-    genai.configure(api_key=api_key)
-else:
-    print(" No API Key found anywhere!")
 
 # 1. Create the App variable FIRST
 app = Flask(__name__)
