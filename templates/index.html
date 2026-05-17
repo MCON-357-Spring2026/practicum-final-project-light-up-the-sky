@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyroPlanner</title>
+    <style>
+        :root {
+            --accent: #ff4b4b;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e0e0e0;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 75, 75, 0.5);
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        input[type="file"] {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px dashed #555;
+            flex-grow: 1;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover {
+            background: #ff3333;
+            transform: translateY(-1px);
+        }
+
+        /* Special Styling for the Future Button */
+        .future-btn {
+            background: linear-gradient(45deg, #ff4b4b, #ff8000);
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            box-shadow: 0 0 25px rgba(255, 75, 75, 0.5);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .future-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(255, 75, 75, 0.7);
+        }
+
+        h2 {
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+            margin-top: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #252525;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        tr:hover td {
+            background-color: #252525;
+        }
+
+        .fw-img {
+            position: fixed;
+            width: 200px;
+            height: auto;
+            z-index: -1;
+            opacity: 1.0;
+            pointer-events: none;
+            filter: brightness(1.5) contrast(1.2);
+        }
+
+        .top-left { top: 20px; left: 20px; transform: rotate(-15deg); }
+        .top-right { top: 20px; right: 20px; transform: rotate(15deg); }
+        .mid-left { top: 50%; left: 10px; transform: translateY(-50%) rotate(-5deg); }
+        .mid-right { top: 50%; right: 10px; transform: translateY(-50%) rotate(5deg); }
+
+        @media (max-width: 1000px) {
+            .fw-img { display: none; }
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        /* Ensure the modal content doesn't show scrollbars */
+        .modal-content {
+            margin: 5% auto;
+            width: 80%;
+            max-width: 900px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent);
+            position: relative;
+            background: black; /* Fills in the gaps around vertical videos */
+            overflow: hidden;   /* This kills that 'extra box' artifact */
+        }
+
+        /* Move the X so it's clearly inside or floating above the corner */
+        .close {
+            color: white;
+            position: absolute;
+            right: 15px;
+            top: 5px;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 3000;      /* Make sure it's on top of the iframe */
+            text-shadow: 0 0 5px black; /* Makes it visible over bright video frames */
+        }
+
+    </style>
+</head>
+<body>
+
+<img src="{{ url_for('static', filename='firework1.jpg') }}" class="fw-img top-left">
+<img src="{{ url_for('static', filename='firework2.jpg') }}" class="fw-img top-right">
+<img src="{{ url_for('static', filename='firework3.jpeg') }}" class="fw-img mid-left">
+<img src="{{ url_for('static', filename='firework4.jpeg') }}" class="fw-img mid-right">
+
+<h1>PyroPlanner</h1>
+
+<div class="result-card">
+    <h3>1. Upload Your Soundtrack</h3>
+    <form action="/" method="post" enctype="multipart/form-data" onsubmit="killVideoAudio()">
+        <input type="file" name="music_file" accept=".mp3,.wav" required>
+        <button type="submit">Analyze & Generate Show</button>
+    </form>
+</div>
+
+{% if not plan %}
+<div style="text-align: center; margin-top: 30px; margin-bottom: 50px;">
+    <button type="button" class="future-btn" onclick="openVideo()">
+        ✨ Click here to view your future ✨
+    </button>
+</div>
+{% endif %}
+
+{% if plan %}
+<h2>Choreography Results</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Segment</th>
+        <th>Time (Start - End)</th>
+        <th>Duration</th>
+        <th>Pace</th>
+        <th>Firework</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in plan %}
+    <tr>
+        <td>{{ item.Segment }}</td>
+        <td>{{ item.Timestamp }}</td>
+        <td>{{ item.Length }}</td>
+        <td>{{ item.Pace }}</td>
+        <td>{{ item.Firework }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeVideo()">&times;</span>
+
+        <iframe
+                src="https://drive.google.com/file/d/17HaKNdS4-8-sk87jh2Vo_xPyLTx4WtTA/preview"
+                width="100%"
+                height="480"
+                allow="autoplay"
+                style="border: none;">
+        </iframe>
+    </div>
+</div>
+
+<script>
+    var modal = document.getElementById("videoModal");
+    // Target the iframe instead of a video tag
+    var iframe = modal.querySelector("iframe");
+
+    function openVideo() {
+        modal.style.display = "block";
+    }
+
+    function closeVideo() {
+        modal.style.display = "none";
+        // The safe trick to completely stop a Google Drive iframe:
+        if (iframe) {
+            var tempSrc = iframe.src;
+            iframe.src = "";       // Pull the plug
+            iframe.src = tempSrc;  // Reset it for next time
+        }
+    }
+
+    // Also kill it if they submit the form to upload a new file
+    function killVideoAudio() {
+        if (iframe) {
+            iframe.src = "";
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeVideo();
+        }
+    }
+</script>
+
+</body>
+</html>
