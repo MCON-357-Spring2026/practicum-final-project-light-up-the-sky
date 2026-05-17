@@ -194,7 +194,7 @@
 
 <div class="result-card">
     <h3>1. Upload Your Soundtrack</h3>
-    <form action="/" method="post" enctype="multipart/form-data">
+    <form action="/" method="post" enctype="multipart/form-data" onsubmit="killVideoAudio()">
         <input type="file" name="music_file" accept=".mp3,.wav" required>
         <button type="submit">Analyze & Generate Show</button>
     </form>
@@ -250,17 +250,28 @@
 
 <script>
     var modal = document.getElementById("videoModal");
-    var video = document.getElementById("promoVideo");
+    // Target the iframe instead of a video tag
+    var iframe = modal.querySelector("iframe");
 
     function openVideo() {
         modal.style.display = "block";
-        video.play();
     }
 
     function closeVideo() {
         modal.style.display = "none";
-        video.pause();
-        video.currentTime = 0;
+        // The safe trick to completely stop a Google Drive iframe:
+        if (iframe) {
+            var tempSrc = iframe.src;
+            iframe.src = "";       // Pull the plug
+            iframe.src = tempSrc;  // Reset it for next time
+        }
+    }
+
+    // Also kill it if they submit the form to upload a new file
+    function killVideoAudio() {
+        if (iframe) {
+            iframe.src = "";
+        }
     }
 
     window.onclick = function(event) {
