@@ -40,17 +40,19 @@ def get_matches_from_db(intensity, segment_duration):
     target_dur = int(segment_duration)
 
     # 1. We find all fireworks where Pace matches exactly
-    # 2. AND where the duration is within 5 seconds of our target (up or down)
+    # 2. AND where the duration is within 5 seconds plus of our target (never less)
     # 3. We shuffle that specific list and pick the top 1
+    # if you want to allow shorter durations, change the query to: AND ABS(duration - ?) <= 5 (instead of 0)
     query = """
             SELECT name, duration
             FROM fireworks
             WHERE LOWER(TRIM(pace)) = ?
-              AND ABS(duration - ?) <= 5
+              AND (duration - ?) >= 0
+              AND (duration - ?) <= 5
             ORDER BY RANDOM()
                 LIMIT 1
             """
-    cursor.execute(query, (search_pace, target_dur))
+    cursor.execute(query, (search_pace, target_dur, target_dur))
     result = cursor.fetchone()
 
     conn.close()
