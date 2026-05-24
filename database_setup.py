@@ -39,10 +39,10 @@ def check_firework_count():
     count = cursor.fetchone()[0]
 
     print(f"\n--- VERIFICATION ---")
-    if count == 72:
+    if count == 98:
         print(f"✅ Verified: All {count} fireworks are safely in the database.")
     else:
-        print(f"⚠️ Warning: Database has {count} fireworks (Expected 72).")
+        print(f"⚠️ Warning: Database has {count} fireworks (Expected 98).")
 
 
 check_firework_count()
