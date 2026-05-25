@@ -6,7 +6,6 @@ import os
 # This creates a file called 'pyro_planner.db' right in your project folder
 conn = sqlite3.connect('pyro_planner.db')
 
-
 def import_csv_to_db(csv_path):
     if not os.path.exists(csv_path):
         print(f"Error: Could not find the file at {csv_path}")
@@ -21,15 +20,10 @@ def import_csv_to_db(csv_path):
     print("--- SUCCESS ---")
     print(f"Imported {len(df)} fireworks into the Python database!")
 
-
 # --- RUN THE IMPORT ---
 # Replace this with your actual path
 my_path = "C:/Users/layce/Downloads/fireworks.csv"
 import_csv_to_db(my_path)
-
-# Quick check: Print the first 5 fireworks to the console
-print("\nFirst 5 Fireworks in Database:")
-print(pd.read_sql('SELECT * FROM fireworks LIMIT 5', conn))
 
 
 def check_firework_count():
@@ -39,10 +33,9 @@ def check_firework_count():
     count = cursor.fetchone()[0]
 
     print(f"\n--- VERIFICATION ---")
-    if count == 98:
+    if count == 98: #change number when you change the number of fireworks and reupdate the csv file
         print(f"✅ Verified: All {count} fireworks are safely in the database.")
     else:
         print(f"⚠️ Warning: Database has {count} fireworks (Expected 98).")
-
 
 check_firework_count()
