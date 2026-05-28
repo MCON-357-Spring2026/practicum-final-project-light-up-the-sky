@@ -101,37 +101,48 @@ def index():
                                                   generation_config={"response_mime_type": "application/json"})
 
                 plan = json.loads(response.text)
-
-                # 2. Match with Database
-                for item in plan:
-                    s_name = item.get('Segment')
-                    s_time = item.get('Timestamp')
-                    s_dur = item.get('Length')
-                    s_pace = item.get('Pace')
-
-                    # Match with your database
-                    match = get_matches_from_db(s_pace, s_dur)
-
-                    if match:
-                        selection = f"{match[0]} ({match[1]}s)"
-                    else:
-                        selection = "⚠️ No Match"
-
-                    # This dictionary must match the keys in your index.html
-                    show_data.append({
-                        "Segment": s_name,
-                        "Timestamp": s_time,
-                        "Length": f"{s_dur}s",
-                        "Pace": s_pace.capitalize() if s_pace else "Medium",
-                        "Firework": selection
-                    })
-                print("Analysis successful!")
+                print("Analysis successful (Gemini).")
 
             except Exception as e:
                 print(f"Error during analysis: {e}")
+                # Fallback: load local example JSON so the app can continue
+                fallback_path = os.path.join(base_dir, "kivinu.json")
+                try:
+                    with open(fallback_path, "r", encoding="utf-8") as f:
+                        plan = json.load(f)
+                    print(f"Loaded fallback plan from `kivinu.json`.")
+                except Exception as e2:
+                    print(f"Failed to load fallback JSON: {e2}")
+                    plan = []  # ensure downstream code is safe
+
             finally:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
+
+            # 2. Match with Database
+            for item in plan:
+                s_name = item.get('Segment')
+                s_time = item.get('Timestamp')
+                s_dur = item.get('Length')
+                s_pace = item.get('Pace')
+
+                # Match with your database
+                match = get_matches_from_db(s_pace, s_dur)
+
+                if match:
+                    selection = f"{match[0]} ({match[1]}s)"
+                else:
+                    selection = "⚠️ No Match"
+
+                # This dictionary must match the keys in your index.html
+                show_data.append({
+                    "Segment": s_name,
+                    "Timestamp": s_time,
+                    "Length": f"{s_dur}s",
+                    "Pace": s_pace.capitalize() if s_pace else "Medium",
+                    "Firework": selection
+                })
+            print("Analysis complete!")
 
     # CRITICAL: This sends the results back to the page
     return render_template('index.html', plan=show_data)
