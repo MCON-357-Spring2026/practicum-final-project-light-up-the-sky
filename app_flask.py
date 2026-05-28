@@ -78,7 +78,7 @@ def index():
             try:
                 # 1. AI Analysis
                 audio_file = genai.upload_file(path=temp_path)
-                model = genai.GenerativeModel("gemini-3.1-flash-lite")
+                model = genai.GenerativeModel("gemini-3.5-flash") #previously used gemini-3.1-flash-lite
                 prompt = """
                 Analyze this music for a firework show. 
                 Break it into segments (Intro, Verse, Chorus, etc.).
@@ -146,6 +146,65 @@ def index():
 
     # CRITICAL: This sends the results back to the page
     return render_template('index.html', plan=show_data)
+
+from fpdf import FPDF
+import io
+from flask import send_file, make_response
+
+@app.route('/download-pdf', methods=['POST'])
+def download_pdf():
+    # 1. Pull the data array string straight from the hidden HTML form element
+    raw_data = request.form.get('pdf_data')
+    if not raw_data:
+        return "No plan data found to export.", 400
+
+    try:
+        plan_data = json.loads(raw_data)
+    except Exception:
+        return "Invalid schedule format.", 400
+
+    # 2. Initialize a secure, standard portrait document
+    pdf = FPDF(orientation='P', unit='mm', format='A4')
+    pdf.add_page()
+
+    # Title Section Header
+    pdf.set_font("Helvetica", style="B", size=18)
+    pdf.cell(0, 12, "Pyro Planner - Show Timeline", ln=True, align="C")
+    pdf.ln(5)
+
+    # 3. Compile the Table Header Arrays
+    headers = ["Segment", "Timestamp", "Length", "Pace", "Assigned Firework"]
+
+    pdf.set_font("Helvetica", size=10)
+
+    # We open a native fpdf2 structural table container
+    with pdf.table(text_align="CENTER") as table:
+        # Render top label row
+        header_row = table.row()
+        for head in headers:
+            header_row.cell(head)
+
+        # Render item loop rows dynamically matching your database framework rows
+        for item in plan_data:
+            row = table.row()
+            row.cell(str(item.get('Segment', '')))
+            row.cell(str(item.get('Timestamp', '')))
+            row.cell(str(item.get('Length', '')))
+            row.cell(str(item.get('Pace', '')).capitalize())
+            row.cell(str(item.get('Firework', '')))
+
+    # 4. Stream the binary payload directly out of system memory buffer allocation
+    pdf_output = io.BytesIO()
+    pdf_output.write(pdf.output())
+    pdf_output.seek(0)
+
+    # Clean wrapper to hand the memory stream securely to client browsers
+    return send_file(
+        pdf_output,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name="firework_show_plan.pdf"
+    )
 
 if __name__ == '__main__':
     # This looks for a 'PORT' variable from the cloud provider

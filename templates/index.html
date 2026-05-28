@@ -209,6 +209,14 @@
 {% endif %}
 
 {% if plan %}
+<div style="margin-bottom: 15px;">
+    <form action="/download-pdf" method="POST">
+        <input type="hidden" name="pdf_data" value='{{ plan | tojson }}'>
+        <button type="submit" class="btn btn-success" style="background-color: #28a745; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
+            📄 Export Show Plan to PDF
+        </button>
+    </form>
+</div>
 <h2>Choreography Results</h2>
 <table>
     <thead>
