@@ -73,6 +73,7 @@ def index():
 
             # --- START ANALYSIS ---
             temp_path = "temp_audio.mp3"
+            temp_path = os.path.join("/tmp", "temp_audio.mp3")
             file.save(temp_path)
 
             try:
