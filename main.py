@@ -79,7 +79,7 @@ def index():
             try:
                 # 1. AI Analysis
                 audio_file = genai.upload_file(path=temp_path)
-                model = genai.GenerativeModel("gemini-3.5-flash") #previously used gemini-3.1-flash-lite
+                model = genai.GenerativeModel("gemini-3.1-flash-lite") #previously used gemini-3.1-flash-lite, gemini-3.5-flash
                 prompt = """
                 Analyze this music for a firework show. 
                 Break it into segments (Intro, Verse, Chorus, etc.).
