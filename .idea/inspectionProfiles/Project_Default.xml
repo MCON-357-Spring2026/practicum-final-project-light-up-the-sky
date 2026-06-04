@@ -5,6 +5,11 @@
       <option name="ignoredPackages">
         <list>
           <option value="gunicorn" />
+          <option value="Flask" />
+          <option value="google-generativeai" />
+          <option value="toml" />
+          <option value="fpdf2" />
+          <option value="requests" />
         </list>
       </option>
     </inspection_tool>
