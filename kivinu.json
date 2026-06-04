@@ -1,0 +1,11 @@
+[
+  {"Segment": "Intro", "Timestamp": "0:00 - 0:13", "Length": 13, "Pace": "slow", "Firework": "Ghost Willow"},
+  {"Segment": "Verse 1", "Timestamp": "0:13 - 0:31", "Length": 18, "Pace": "slow", "Firework": "Falling Leaves"},
+  {"Segment": "Build-up", "Timestamp": "0:31 - 0:41", "Length": 10, "Pace": "medium", "Firework": "Whistling Tail Comet"},
+  {"Segment": "Chorus 1", "Timestamp": "0:41 - 1:12", "Length": 31, "Pace": "fast", "Firework": "Crossfire 500"},
+  {"Segment": "Verse 2", "Timestamp": "1:12 - 1:30", "Length": 18, "Pace": "slow", "Firework": "Silver Crossette"},
+  {"Segment": "Build-up", "Timestamp": "1:30 - 1:40", "Length": 10, "Pace": "medium", "Firework": "Rising Golden Tiger"},
+  {"Segment": "Chorus 2", "Timestamp": "1:40 - 2:11", "Length": 31, "Pace": "fast", "Firework": "Crossfire 500"},
+  {"Segment": "Instrumental / Dance Break", "Timestamp": "2:11 - 2:32", "Length": 21, "Pace": "medium", "Firework": "Neon Peony Wave"},
+  {"Segment": "Chorus 3 / Finale", "Timestamp": "2:32 - 3:05", "Length": 33, "Pace": "fast", "Firework": "Titanium Brocade Crown Rush"}
+]
